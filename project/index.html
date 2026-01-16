@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1-8数列后续位对应表</title>
+    <!-- 引入Bootstrap简化样式和布局（CDN，无需本地下载） -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- 引入Font Awesome图标（增强视觉表现，可选但提升高级感） -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css">
+    <style>
+        /* 全局样式重置与基础配置 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            /* 柔和渐变背景，替代纯白背景，提升高级感 */
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4eaf5 100%);
+            min-height: 100vh;
+            font-family: "Microsoft YaHei", "PingFang SC", "Helvetica Neue", sans-serif;
+            color: #333;
+        }
+
+        /* 自定义容器（优化间距和阴影） */
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        /* 页面标题（新增，提升视觉层级） */
+        .page-title {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #2c5282;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        /* 输入区域（卡片式升级，悬浮阴影） */
+        .input-area {
+            margin-bottom: 25px;
+            padding: 28px;
+            background-color: #ffffff;
+            border-radius: 12px;
+            /* 柔和阴影，替代边框，更显高级 */
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+            transition: all 0.3s ease;
+        }
+
+        .input-area:hover {
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .input-area h5 {
+            color: #2c5282;
+            font-weight: 600;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .input-area .text-muted {
+            color: #718096 !important;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        /* 输入框优化 */
+        #numberSequence {
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            padding: 12px 16px;
+            font-size: 15px;
+            transition: all 0.3s ease;
+        }
+
+        #numberSequence:focus {
+            outline: none;
+            border-color: #63b3ed;
+            box-shadow: 0 0 0 3px rgba(99, 179, 237, 0.15);
+        }
+
+        /* 按钮优化（渐变背景，hover反馈） */
+        .btn-primary {
+            background: linear-gradient(135deg, #3182ce 0%, #2c5282 100%);
+            border: none;
+            border-radius: 8px;
+            padding: 10px 24px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(49, 130, 206, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #2b6cb0 0%, #234361 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(49, 130, 206, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 8px rgba(49, 130, 206, 0.3);
+        }
+
+        /* 提醒区域（优化样式，更醒目柔和） */
+        .warning-area {
+            margin-bottom: 25px;
+            padding: 20px;
+            border-radius: 12px;
+            display: none; /* 初始隐藏 */
+            background-color: #fffaf0;
+            border: 1px solid #fef7e0;
+            box-shadow: 0 4px 16px rgba(250, 240, 160, 0.1);
+        }
+
+        .warning-area h6 {
+            color: #d69e2e;
+            font-weight: 600;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        #warningContent {
+            color: #b7791f;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        /* 表格区域（优化滚动和容器样式） */
+        .table-area {
+            overflow-x: auto;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+            background-color: #ffffff;
+        }
+
+        /* 表格样式全面升级 */
+        table {
+            margin: 0;
+            table-layout: fixed;
+            word-wrap: break-word;
+            border-collapse: separate;
+            border-spacing: 0;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        /* 表头样式（渐变背景，白色文字） */
+        thead {
+            background: linear-gradient(135deg, #2c5282 0%, #3182ce 100%);
+            color: #ffffff;
+        }
+
+        th, td {
+            text-align: center;
+            vertical-align: middle !important;
+            padding: 16px !important;
+            border: none !important;
+        }
+
+        th {
+            font-weight: 600;
+            font-size: 15px;
+            letter-spacing: 0.5px;
+        }
+
+        /* 表体斑马纹（提升可读性，柔和浅灰） */
+        tbody tr:nth-child(even) {
+            background-color: #f7fafc;
+        }
+
+        tbody tr {
+            transition: all 0.2s ease;
+        }
+
+        tbody tr:hover {
+            background-color: #edf2f7 !important;
+        }
+
+        /* 重复值单元格标记样式（优化配色，更柔和醒目） */
+        .duplicate-warning {
+            background-color: #fef7e0 !important;
+            color: #b7791f !important;
+            font-weight: 600;
+            position: relative;
+        }
+
+        .duplicate-warning::before {
+            content: "★";
+            position: absolute;
+            left: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 12px;
+            color: #d69e2e;
+        }
+
+        /* 响应式优化（小屏幕适配） */
+        @media (max-width: 768px) {
+            .container {
+                margin: 20px auto;
+            }
+
+            .page-title {
+                font-size: 24px;
+                margin-bottom: 20px;
+            }
+
+            .input-area {
+                padding: 20px;
+            }
+
+            th, td {
+                padding: 12px !important;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 新增：页面标题 -->
+        <h2 class="page-title">
+            <i class="fa fa-bar-chart" aria-hidden="true"></i> 1-8数列后续位对应表
+        </h2>
+
+        <!-- 1. 输入区域（优化视觉细节） -->
+        <div class="input-area">
+            <h5>
+                <i class="fa fa-pencil-square-o" aria-hidden="true"></i> 请输入1-8组成的数列
+            </h5>
+            <p class="text-muted small mb-3">
+                格式说明：数字范围1-8，可用逗号、空格分隔，示例：2、3、1、2、4、5、1 或 2 3 1 2 4 5 1
+            </p>
+            <textarea id="numberSequence" class="form-control mb-3" rows="3" placeholder="请输入数列...">2、3、1、2、4、5、1</textarea>
+            <button onclick="generateSequenceTable()" class="btn btn-primary">
+                <i class="fa fa-table" aria-hidden="true"></i> 生成对应表格
+            </button>
+        </div>
+
+        <!-- 2. 提醒区域（优化视觉细节） -->
+        <div id="warningBox" class="warning-area">
+            <h6>
+                <i class="fa fa-exclamation-triangle" aria-hidden="true"></i> 重复值提醒
+            </h6>
+            <div id="warningContent"></div>
+        </div>
+
+        <!-- 3. 表格展示区域 -->
+        <div class="table-area">
+            <table id="sequenceTable" class="table table-bordered table-hover"></table>
+        </div>
+    </div>
+
+    <!-- 引入Bootstrap JS（仅用于样式增强，核心逻辑不依赖） -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        /**
+         * 核心函数：生成数列后续位对应表并监测重复值（逻辑完全保留，无修改）
+         */
+        function generateSequenceTable() {
+            // 步骤1：获取并解析用户输入
+            const inputVal = document.getElementById('numberSequence').value.trim();
+            if (!inputVal) {
+                alert('请输入有效的数列！');
+                return;
+            }
+
+            // 解析输入：去除中文顿号、空格，按逗号分割，过滤出1-8的有效数字
+            const cleanVal = inputVal.replace(/、| /g, ',').replace(/,+/g, ',');
+            const rawSequence = cleanVal.split(',').filter(item => {
+                const num = parseInt(item);
+                return !isNaN(num) && num >= 1 && num <= 8;
+            });
+
+            // 转换为数字数组（位置从1开始计数）
+            const sequence = rawSequence.map(item => parseInt(item));
+            const seqLength = sequence.length;
+            if (seqLength <= 1) {
+                alert('数列长度需大于1，才能生成后续位对应表！');
+                return;
+            }
+
+            // 步骤2：整理每个数字（1-8）出现的所有位置
+            const numPositions = {};
+            for (let i = 1; i <= 8; i++) {
+                numPositions[i] = []; // 初始化每个数字的位置数组
+            }
+            sequence.forEach((num, index) => {
+                const position = index + 1; // 位置从1开始
+                numPositions[num].push(position);
+            });
+
+            // 步骤3：确定最大后续位数（列数）：数列长度-1（最后一个位置无后续位）
+            const maxK = seqLength - 1;
+
+            // 步骤4：生成表格结构
+            const table = document.getElementById('sequenceTable');
+            table.innerHTML = ''; // 清空原有表格
+
+            // 4.1 生成表头
+            const thead = document.createElement('thead');
+            const headerRow = document.createElement('tr');
+            // 第一列：数字
+            const firstTh = document.createElement('th');
+            firstTh.textContent = '数字';
+            headerRow.appendChild(firstTh);
+            // 后续列：后面1位 ~ 后面maxK位
+            for (let k = 1; k <= maxK; k++) {
+                const th = document.createElement('th');
+                th.textContent = `后面${k}位`;
+                headerRow.appendChild(th);
+            }
+            thead.appendChild(headerRow);
+            table.appendChild(thead);
+
+            // 4.2 生成表体
+            const tbody = document.createElement('tbody');
+            const duplicateWarnings = []; // 收集重复值提醒信息
+
+            // 遍历数字1-8，生成每行
+            for (let num = 1; num <= 8; num++) {
+                const row = document.createElement('tr');
+                // 第一列：数字本身
+                const numTd = document.createElement('td');
+                numTd.textContent = num;
+                row.appendChild(numTd);
+
+                // 后续列：填充对应后续位数值
+                const positions = numPositions[num]; // 当前数字的所有出现位置
+                for (let k = 1; k <= maxK; k++) {
+                    const td = document.createElement('td');
+                    const followNums = []; // 收集当前数字、当前k位的所有后续值
+
+                    // 遍历当前数字的所有位置，提取后续k位的值
+                    positions.forEach(pos => {
+                        const followIndex = pos + k - 1; // 转换为数组索引（从0开始）
+                        if (followIndex < seqLength) { // 确保不超出数列范围
+                            followNums.push(sequence[followIndex]);
+                        }
+                    });
+
+                    // 填充单元格内容（无数据显示"-"）
+                    const cellContent = followNums.length > 0 ? followNums.join('、') : '-';
+                    td.textContent = cellContent;
+
+                    // 步骤5：监测重复值（≥3次相同值）
+                    if (followNums.length >= 3) {
+                        const numCount = {};
+                        // 统计每个数值出现的次数
+                        followNums.forEach(n => {
+                            numCount[n] = (numCount[n] || 0) + 1;
+                        });
+                        // 筛选出出现≥3次的数值
+                        const duplicateNums = Object.entries(numCount).filter(([_, count]) => count >= 3);
+                        if (duplicateNums.length > 0) {
+                            // 标记单元格样式
+                            td.classList.add('duplicate-warning');
+                            // 收集提醒信息
+                            duplicateNums.forEach(([n, count]) => {
+                                duplicateWarnings.push(`数字${num}的「后面${k}位」中，数值${n}出现了${count}次（≥3次）`);
+                            });
+                        }
+                    }
+
+                    row.appendChild(td);
+                }
+
+                tbody.appendChild(row);
+            }
+
+            table.appendChild(tbody);
+
+            // 步骤6：展示重复值提醒
+            const warningBox = document.getElementById('warningBox');
+            const warningContent = document.getElementById('warningContent');
+            if (duplicateWarnings.length > 0) {
+                warningContent.innerHTML = duplicateWarnings.join('<br>');
+                warningBox.style.display = 'block';
+            } else {
+                warningBox.style.display = 'none';
+            }
+        }
+
+        // 页面加载完成后，自动生成示例表格
+        window.onload = function() {
+            generateSequenceTable();
+        };
+    </script>
+</body>
+</html>

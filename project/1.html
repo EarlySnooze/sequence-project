@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数字后续值对应表生成器</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(to right, #4b6cb7, #182848);
+            color: white;
+            padding: 25px 30px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.5;
+        }
+        
+        .content {
+            display: flex;
+            flex-wrap: wrap;
+            padding: 25px;
+        }
+        
+        .input-section {
+            flex: 1;
+            min-width: 300px;
+            padding: 20px;
+            border-right: 1px solid #eaeaea;
+        }
+        
+        .result-section {
+            flex: 2;
+            min-width: 500px;
+            padding: 20px;
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            color: #182848;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #4b6cb7;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .section-title i {
+            color: #4b6cb7;
+        }
+        
+        .input-group {
+            margin-bottom: 25px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #444;
+        }
+        
+        #numberSequence {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            transition: border-color 0.3s;
+        }
+        
+        #numberSequence:focus {
+            border-color: #4b6cb7;
+            outline: none;
+        }
+        
+        .input-hint {
+            margin-top: 8px;
+            font-size: 0.9rem;
+            color: #666;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .btn {
+            padding: 14px 28px;
+            background: linear-gradient(to right, #4b6cb7, #3a56a4);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+        }
+        
+        .btn:hover {
+            background: linear-gradient(to right, #3a56a4, #2a4680);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .example-section {
+            margin-top: 25px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #4b6cb7;
+        }
+        
+        .example-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #4b6cb7;
+        }
+        
+        .example-sequence {
+            font-family: monospace;
+            font-size: 1.2rem;
+            color: #182848;
+            background-color: white;
+            padding: 8px 12px;
+            border-radius: 5px;
+            display: inline-block;
+            margin-top: 5px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .example-sequence:hover {
+            background-color: #eef2ff;
+        }
+        
+        .table-container {
+            overflow-x: auto;
+            margin-top: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 600px;
+        }
+        
+        th {
+            background-color: #4b6cb7;
+            color: white;
+            padding: 15px 10px;
+            text-align: center;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+        }
+        
+        th:first-child {
+            border-radius: 8px 0 0 0;
+        }
+        
+        th:last-child {
+            border-radius: 0 8px 0 0;
+        }
+        
+        td {
+            padding: 12px 10px;
+            text-align: center;
+            border-bottom: 1px solid #eaeaea;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        
+        .row-header {
+            background-color: #eef2ff;
+            font-weight: 600;
+            color: #182848;
+        }
+        
+        .duplicate-warning {
+            background-color: #ffeaa7;
+            animation: pulse 1.5s infinite;
+            font-weight: bold;
+            color: #d63031;
+            position: relative;
+        }
+        
+        .duplicate-warning::after {
+            content: "⚠";
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            font-size: 0.8rem;
+        }
+        
+        @keyframes pulse {
+            0% { background-color: #ffeaa7; }
+            50% { background-color: #ffdc8a; }
+            100% { background-color: #ffeaa7; }
+        }
+        
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .alert.hidden {
+            display: none;
+        }
+        
+        .alert.warning {
+            background-color: #ffeaa7;
+            color: #d63031;
+            border-left: 4px solid #fdcb6e;
+        }
+        
+        .alert.info {
+            background-color: #d6eaf8;
+            color: #2c3e50;
+            border-left: 4px solid #5dade2;
+        }
+        
+        .alert i {
+            font-size: 1.3rem;
+        }
+        
+        .sequence-display {
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+        }
+        
+        .sequence-display span {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            line-height: 40px;
+            text-align: center;
+            background-color: white;
+            border-radius: 50%;
+            margin: 0 5px;
+            font-weight: 600;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .sequence-display .position-label {
+            display: inline-block;
+            width: 40px;
+            height: 20px;
+            line-height: 20px;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #666;
+            margin: 0 5px;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-size: 0.9rem;
+            border-top: 1px solid #eaeaea;
+            margin-top: 20px;
+        }
+        
+        @media (max-width: 900px) {
+            .content {
+                flex-direction: column;
+            }
+            
+            .input-section {
+                border-right: none;
+                border-bottom: 1px solid #eaeaea;
+            }
+        }
+        
+        @media (max-width: 600px) {
+            .section-title {
+                font-size: 1.3rem;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .sequence-display span {
+                width: 35px;
+                height: 35px;
+                line-height: 35px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>数字后续值对应表生成器</h1>
+            <p class="subtitle">输入1-8组成的数列，自动生成"数字→后续位数值"对应表，并监测重复值。当表格中某区域出现3个相同数值时，自动给出提醒。</p>
+        </header>
+        
+        <div class="content">
+            <div class="input-section">
+                <div class="section-title">
+                    <i class="fas fa-edit"></i>
+                    <span>输入设置</span>
+                </div>
+                
+                <div class="input-group">
+                    <label for="numberSequence">请输入1-8组成的数列（用逗号、空格或直接输入数字）：</label>
+                    <input type="text" id="numberSequence" placeholder="例如：2,3,1,2,4,5,1" value="2,3,1,2,4,5,1">
+                    <div class="input-hint">
+                        <i class="fas fa-info-circle"></i>
+                        <span>请确保输入的数字在1-8范围内，支持用逗号、空格或直接输入数字序列</span>
+                    </div>
+                </div>
+                
+                <button id="generateBtn" class="btn">
+                    <i class="fas fa-table"></i>
+                    <span>生成对应表</span>
+                </button>
+                
+                <div class="example-section">
+                    <div class="example-title">示例数列（点击使用）：</div>
+                    <div class="example-sequence" data-sequence="2,3,1,2,4,5,1">2, 3, 1, 2, 4, 5, 1</div>
+                    <div class="example-sequence" data-sequence="1,2,3,4,5,6,7,8">1, 2, 3, 4, 5, 6, 7, 8</div>
+                    <div class="example-sequence" data-sequence="8,7,6,5,4,3,2,1">8, 7, 6, 5, 4, 3, 2, 1</div>
+                    <div class="example-sequence" data-sequence="1,1,2,2,3,3,4,4,5,5">1, 1, 2, 2, 3, 3, 4, 4, 5, 5</div>
+                </div>
+            </div>
+            
+            <div class="result-section">
+                <div class="section-title">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>结果展示</span>
+                </div>
+                
+                <div class="alert info hidden" id="infoAlert">
+                    <i class="fas fa-info-circle"></i>
+                    <div>
+                        <strong>使用说明：</strong> 输入1-8组成的数列，点击"生成对应表"按钮，系统将自动生成对应表并监测重复值。
+                    </div>
+                </div>
+                
+                <div class="alert warning hidden" id="warningAlert">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <div id="warningMessage"></div>
+                </div>
+                
+                <div class="sequence-display" id="sequenceDisplay">
+                    <!-- 数列展示区域 -->
+                </div>
+                
+                <div class="table-container" id="tableContainer">
+                    <!-- 表格将在这里动态生成 -->
+                    <p style="text-align: center; padding: 30px; color: #666;">请输入数列并点击"生成对应表"按钮</p>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>数字后续值对应表生成器 &copy; 2023 | 功能：基于输入的1-8数列生成数字→后续位数值对应表，并监测重复值</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const numberSequenceInput = document.getElementById('numberSequence');
+            const generateBtn = document.getElementById('generateBtn');
+            const tableContainer = document.getElementById('tableContainer');
+            const warningAlert = document.getElementById('warningAlert');
+            const warningMessage = document.getElementById('warningMessage');
+            const infoAlert = document.getElementById('infoAlert');
+            const sequenceDisplay = document.getElementById('sequenceDisplay');
+            const exampleSequences = document.querySelectorAll('.example-sequence');
+            
+            // 显示使用说明
+            infoAlert.classList.remove('hidden');
+            
+            // 示例数列点击事件
+            exampleSequences.forEach(example => {
+                example.addEventListener('click', function() {
+                    const sequence = this.getAttribute('data-sequence');
+                    numberSequenceInput.value = sequence;
+                    generateTable();
+                });
+            });
+            
+            // 生成表格按钮点击事件
+            generateBtn.addEventListener('click', generateTable);
+            
+            // 输入框回车键事件
+            numberSequenceInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    generateTable();
+                }
+            });
+            
+            // 生成表格的主函数
+            function generateTable() {
+                // 获取并处理输入
+                const input = numberSequenceInput.value.trim();
+                if (!input) {
+                    alert('请输入数列！');
+                    return;
+                }
+                
+                // 解析数列（支持逗号、空格分隔或直接输入数字）
+                let sequence = input.split(/[,，\s]+/).filter(item => item.trim() !== '');
+                
+                // 转换为数字并验证
+                sequence = sequence.map(num => {
+                    const parsed = parseInt(num);
+                    if (isNaN(parsed) || parsed < 1 || parsed > 8) {
+                        throw new Error('数列中只能包含1-8的数字！');
+                    }
+                    return parsed;
+                });
+                
+                // 清空之前的警告
+                warningAlert.classList.add('hidden');
+                warningMessage.textContent = '';
+                
+                // 显示输入的数列
+                displaySequence(sequence);
+                
+                // 生成对应表
+                const tableData = generateTableData(sequence);
+                
+                // 创建表格
+                createTable(tableData, sequence.length);
+                
+                // 监测重复值
+                checkForDuplicates(tableData);
+            }
+            
+            // 显示输入的数列
+            function displaySequence(sequence) {
+                let html = '<div style="margin-bottom: 10px; font-weight: 600;">输入数列：</div>';
+                html += '<div>';
+                
+                // 显示位置标签
+                for (let i = 0; i < sequence.length; i++) {
+                    html += `<div class="position-label">位置${i+1}</div>`;
+                }
+                html += '</div><div>';
+                
+                // 显示数字
+                for (let i = 0; i < sequence.length; i++) {
+                    html += `<span>${sequence[i]}</span>`;
+                }
+                html += '</div>';
+                
+                sequenceDisplay.innerHTML = html;
+            }
+            
+            // 生成表格数据
+            function generateTableData(sequence) {
+                // 初始化数据结构：8行，每行对应数字1-8
+                const tableData = {};
+                for (let i = 1; i <= 8; i++) {
+                    tableData[i] = {};
+                }
+                
+                // 遍历数列中的每个数字
+                for (let pos = 0; pos < sequence.length; pos++) {
+                    const currentNumber = sequence[pos];
+                    
+                    // 计算当前数字后面第k位的值
+                    for (let k = 1; k <= sequence.length - pos - 1; k++) {
+                        const nextValue = sequence[pos + k];
+                        
+                        // 如果对应列还没有数组，则创建
+                        if (!tableData[currentNumber][k]) {
+                            tableData[currentNumber][k] = [];
+                        }
+                        
+                        // 添加值到对应位置
+                        tableData[currentNumber][k].push(nextValue);
+                    }
+                }
+                
+                return tableData;
+            }
+            
+            // 创建表格
+            function createTable(tableData, sequenceLength) {
+                // 计算最大列数（最大k值）
+                let maxK = 0;
+                for (let num = 1; num <= 8; num++) {
+                    const ks = Object.keys(tableData[num]);
+                    if (ks.length > 0) {
+                        const maxKForNum = Math.max(...ks.map(k => parseInt(k)));
+                        maxK = Math.max(maxK, maxKForNum);
+                    }
+                }
+                
+                // 创建表格HTML
+                let html = '<table>';
+                
+                // 表头
+                html += '<thead><tr>';
+                html += '<th>数字</th>';
+                for (let k = 1; k <= maxK; k++) {
+                    html += `<th>后面第${k}位</th>`;
+                }
+                html += '</tr></thead>';
+                
+                // 表体
+                html += '<tbody>';
+                for (let num = 1; num <= 8; num++) {
+                    html += `<tr>`;
+                    html += `<td class="row-header">${num}</td>`;
+                    
+                    for (let k = 1; k <= maxK; k++) {
+                        const values = tableData[num][k] || [];
+                        const cellContent = values.length > 0 ? values.join(', ') : '-';
+                        html += `<td id="cell-${num}-${k}" data-values="${values.join(',')}">${cellContent}</td>`;
+                    }
+                    
+                    html += `</tr>`;
+                }
+                html += '</tbody></table>';
+                
+                tableContainer.innerHTML = html;
+            }
+            
+            // 检查重复值
+            function checkForDuplicates(tableData) {
+                const duplicates = [];
+                const valueCounts = {};
+                
+                // 遍历所有单元格，统计每个数字出现的次数
+                for (let num = 1; num <= 8; num++) {
+                    for (let k = 1; k <= 10; k++) { // 假设最多10列
+                        const cell = document.getElementById(`cell-${num}-${k}`);
+                        if (!cell) continue;
+                        
+                        const valuesStr = cell.getAttribute('data-values');
+                        if (!valuesStr || valuesStr === '') continue;
+                        
+                        const values = valuesStr.split(',').filter(v => v !== '');
+                        
+                        // 统计每个数字出现的次数
+                        values.forEach(value => {
+                            const key = `${value}`;
+                            if (!valueCounts[key]) {
+                                valueCounts[key] = {
+                                    count: 0,
+                                    locations: []
+                                };
+                            }
+                            
+                            valueCounts[key].count++;
+                            valueCounts[key].locations.push(`数字${num}的后面第${k}位`);
+                        });
+                    }
+                }
+                
+                // 找出出现3次或以上的数字
+                for (const [value, data] of Object.entries(valueCounts)) {
+                    if (data.count >= 3) {
+                        duplicates.push({
+                            value: value,
+                            count: data.count,
+                            locations: data.locations
+                        });
+                    }
+                }
+                
+                // 如果有重复值，显示警告
+                if (duplicates.length > 0) {
+                    let warningMsg = '<strong>检测到重复值：</strong><br>';
+                    
+                    duplicates.forEach(dup => {
+                        warningMsg += `数字 <strong>${dup.value}</strong> 出现了 <strong>${dup.count}</strong> 次，位置：${dup.locations.join('，')}<br>`;
+                    });
+                    
+                    warningMsg += '<br>重复值单元格已用黄色背景高亮显示。';
+                    warningMessage.innerHTML = warningMsg;
+                    warningAlert.classList.remove('hidden');
+                    
+                    // 高亮重复值单元格
+                    highlightDuplicateCells(duplicates);
+                }
+            }
+            
+            // 高亮重复值单元格
+            function highlightDuplicateCells(duplicates) {
+                // 先移除之前的高亮
+                document.querySelectorAll('.duplicate-warning').forEach(cell => {
+                    cell.classList.remove('duplicate-warning');
+                });
+                
+                // 高亮新的重复值单元格
+                duplicates.forEach(dup => {
+                    for (let num = 1; num <= 8; num++) {
+                        for (let k = 1; k <= 10; k++) {
+                            const cell = document.getElementById(`cell-${num}-${k}`);
+                            if (!cell) continue;
+                            
+                            const valuesStr = cell.getAttribute('data-values');
+                            if (!valuesStr || valuesStr === '') continue;
+                            
+                            const values = valuesStr.split(',').filter(v => v !== '');
+                            
+                            // 如果单元格包含重复的数字
+                            if (values.includes(dup.value)) {
+                                cell.classList.add('duplicate-warning');
+                            }
+                        }
+                    }
+                });
+            }
+            
+            // 页面加载时自动生成示例表格
+            generateTable();
+        });
+    </script>
+</body>
+</html>
